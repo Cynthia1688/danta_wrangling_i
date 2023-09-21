@@ -1,0 +1,133 @@
+---
+title: "Data Manipulation"
+output: github_document
+---
+
+Import FAS litters and pups.
+
+
+```{r}
+library(tidyverse)
+
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+pups_df = janitor::clean_names(pups_df)
+```
+
+##`select` is used to select columns!
+
+```{r}
+litters_df = select(litters_df, group, litter_number, gd0_weight)
+
+select(litters_df, gd0_weight, group)
+
+select(litters_df, group, gd0_weight:gd_of_birth)
+
+select(litters_df, group, starts_with("pups"))
+
+select(litters_df, -litter_number)
+
+select(litters_df, -starts_with("gd"))
+
+select(litters_df, group, litters_id = litter_number)
+
+select(litters_df, group, litters_id = litter_number, everything())
+
+select(litters_df, gd0_weight, everything())
+```
+
+```{r}
+rename(litters_df,litter_id = litter_number)
+relocate(litters_df, litter_number)
+```
+
+
+`select` vs `pull`
+```{r}
+select(litters_df, group)
+pull(litters_df, group)
+```
+
+## `filter`
+
+get rid of rows using `filter()`
+
+```{r}
+filter(litters_df, grouo == "Con7")
+
+filter(litters_df, grouo == "Mod8")
+
+filter(litters_df, grouo != "Mod8")
+
+filter(litters_df, gd0_weight > 20)
+
+filter(litters_df, gd0_weight <=20)
+
+filter(litters_df, group == "Con7" | group == "Con8")
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+filter(litters_df, !(group == "Con7"))
+
+filter(litters_df, group %in% c("Con7, "Con8), gd0_weight > 20)
+```
+
+What about missing rows.
+
+```{r}
+drop_na(litters_df)
+drop_na(litters_df, gd0_weight)
+```
+
+
+## `mutate`
+
+This is used to add or change variables.
+
+```{r}
+mutate(litters_df, wt_gain = gd18_weight - gd0_weight)
+
+mutate(litters_df, group = str_to_lower(group))
+
+mutate(
+  itters_df,
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group)
+)
+```
+
+##`arrange`
+
+```{r}
+arrange(litters_df, gd0_weight)
+arrange(litters_df, group, gd0_weight)
+
+```
+
+
+## pipes
+
+```{r}
+litter_df = 
+  read_csv("data/FAS_litters.csv") |>
+  janitor::clean_names() |> 
+  select(-starts_with("pups")) |> 
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight = gd0_weight,
+  ) |> 
+  drop_na(wt_gain) |> 
+  arrange(group, wt_gain)
+```
+
+
+```{r}
+```
+
+
+
+
