@@ -118,7 +118,7 @@ litter_df =
   select(-starts_with("pups")) |> 
   mutate(
     group = str_to_lower(group),
-    wt_gain = gd18_weight = gd0_weight,
+    wt_gain = gd18_weight - gd0_weight,
   ) |> 
   drop_na(wt_gain) |> 
   arrange(group, wt_gain)
